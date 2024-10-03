@@ -14,7 +14,7 @@ function ExpenseItem({id,description,date,amount}){
             <View style={styles.ExpenseItem}>
                 <View>
                     <Text style={[styles.description,styles.TextBase]}>{description}</Text>
-                    <Text style={styles.TextBase}>{getFormatDate(date)}</Text>
+                    <Text style={styles.TextBase}>{date ? getFormatDate(date) : 'No date'}</Text>
                 </View>
                 <View style={styles.amountContainer}>
                     <Text style={styles.amount}>{amount}</Text>

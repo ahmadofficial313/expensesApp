@@ -7,6 +7,8 @@ import RecentExpenses from './screen/RecentExpenses';
 import { GlobalStyles } from './constants/styles';
 import {Ionicons} from '@expo/vector-icons'
 import IconButton from './components/ExpensesOutput/UI/IconButton';
+import AllExpenses from './screen/AllExpenses';
+import ExpenseContextProvider from './store/ExpenseContext';
 
 const Stack=createNativeStackNavigator()
 const BottomTabs=createBottomTabNavigator()
@@ -38,7 +40,7 @@ function ExpensesOverview(){
           title:'All Expenses',
           tabBarIcon:({color,size})=><Ionicons name="calendar" color={color} size={size}/>
         }}
-        component={RecentExpenses}/>
+        component={AllExpenses}/>
         </BottomTabs.Navigator>
   )
 }
@@ -46,6 +48,7 @@ export default function App() {
   return (
     <>
       <StatusBar style="light" />
+      <ExpenseContextProvider>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{
               headerStyle:{backgroundColor:GlobalStyles.colors.primary500},
@@ -65,6 +68,7 @@ export default function App() {
          />
         </Stack.Navigator>
       </NavigationContainer>
+      </ExpenseContextProvider>
     </>
   );
 }
