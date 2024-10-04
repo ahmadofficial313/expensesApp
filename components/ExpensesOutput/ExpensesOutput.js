@@ -1,14 +1,20 @@
-import { View,StyleSheet } from "react-native"
+import { View,StyleSheet,Text } from "react-native"
 import ExpensesSummary from "./ExpensesSumary"
 import ExpensesList from "./ExpensesList"
 import { GlobalStyles } from "../../constants/styles"
 
-function ExpensesOutput({expenses,expensesPeriod}){
-    
+function ExpensesOutput({expenses,expensesPeriod,fallback}){
+    let content = <View style={{marginTop:30}}>
+                         <Text style={styles.infotext}>Oops!</Text>
+                       <Text style={styles.infotext}>{fallback}</Text>
+                    </View>
+    if(expenses.length>0){
+        content=<ExpensesList expenses={expenses}/>
+    }
      return(
         <View style={styles.container}>
             <ExpensesSummary periodName={expensesPeriod} expenses={expenses}/>
-            <ExpensesList expenses={expenses}/>
+            {content}
         </View>
      )
 }
@@ -20,5 +26,10 @@ const styles=StyleSheet.create({
         paddingHorizontal:20,
         paddingTop:20,
         paddingBottom:0
+    },
+    infotext:{
+        color:'white',
+        textAlign:'center',
+        fontSize:16
     }
 })
