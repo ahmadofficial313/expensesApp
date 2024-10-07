@@ -5,19 +5,22 @@ import { GlobalStyles } from "../constants/styles";
 import Button from "../components/ExpensesOutput/UI/Button";
 import { ExpenseContext } from "../store/ExpenseContext";
 import ExpenseForm from "../components/ExpensesOutput/ExpenseForm";
+import { storeExpense , updateExpense, deleteExpense } from "../util/Http";
 
 function ManageExpenses({ route, navigation }) {
     const expenseCtx = useContext(ExpenseContext);
     const editedExpenseId = route.params?.expenseId;
     const isEditing = !!editedExpenseId;
-
+    const selectedExpense= expenseCtx.expenses.find(expense => expense.id === editedExpenseId)
+  
     useLayoutEffect(() => {
         navigation.setOptions({
             title: isEditing ? 'Edit Expense' : 'Add Expense',
         });
     }, [navigation, isEditing]);
 
-    function expenseDeleteHandler() {
+    async function expenseDeleteHandler() {
+        await deleteExpense(editedExpenseId)
         expenseCtx.deleteExpense(editedExpenseId);
         navigation.goBack();
     }
@@ -26,19 +29,16 @@ function ManageExpenses({ route, navigation }) {
         navigation.goBack();
     }
 
-    function confirmHandler() {
+    async function confirmHandler(expenseData) {
         if (isEditing) {
-            expenseCtx.updateExpense(editedExpenseId, {
-                description: 'Updated Text',
-                amount: 99.99,
-                date: new Date('2024-10-04'),
-            });
+            expenseCtx.updateExpense(editedExpenseId, expenseData);
+            await updateExpense(editedExpenseId, expenseData);
+
+            
         } else {
-            expenseCtx.addExpense({
-                description: 'some pair of socks',
-                amount: 15.00,
-                date: new Date('2024-02-23'),
-            });
+           const id= await storeExpense(expenseData);
+            expenseCtx.addExpense({...expenseData,id:id});
+           
         }
         navigation.goBack();
     }
@@ -46,7 +46,12 @@ function ManageExpenses({ route, navigation }) {
     return (
         <ScrollView style={styles.container}>
             <View style={styles.container}>
-                <ExpenseForm onCancel={cancelHandler} onSubmit={confirmHandler} isEditing={isEditing}/>
+                <ExpenseForm 
+                onCancel={cancelHandler}
+                 onSubmit={confirmHandler}
+                  isEditing={isEditing}
+                  defaultValues={selectedExpense}
+                  />
                
                 {isEditing && (
                     <View style={styles.deleteContainer}>
